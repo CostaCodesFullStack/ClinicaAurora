@@ -109,7 +109,7 @@ function Footer() {
 
 function CTA() { 
   return (
-    <section className="container section-pad section-border-top">
+    <section className="container section-pad">
       <div className="cta-block animate-reveal">
         <span className="eyebrow">Um primeiro passo</span>
         <h2>Seu cuidado começa <i>com uma conversa.</i></h2>
@@ -162,7 +162,7 @@ function Home() {
         </div>
       </section>
       
-      <section className="container section-pad">
+      <section className="container section-pad manifesto-section">
         <div className="manifesto-wrap animate-reveal">
           <span className="eyebrow">01 / 04 — O jeito Aurora</span>
           <h2>Cuidar é olhar <i>por inteiro.</i></h2>
@@ -280,7 +280,7 @@ function Home() {
         </div>
       </section>
       
-      <section className="container section-pad section-border-top section-border-bottom">
+      <section className="container section-pad section-border-top">
         <div className="test-block animate-reveal">
           <span className="eyebrow">Experiência de atendimento</span>
           <blockquote>Atendimento personalizado, planejamento individualizado e acompanhamento próximo em cada etapa.</blockquote>
@@ -387,13 +387,15 @@ function InnerPage({type}:{type:string}) {
           <div className="results-disclaimer animate-reveal">
             Conteúdo demonstrativo para projeto de portfólio · não representa resultados reais de pacientes.
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', width: '100%' }}>
+          <div className="results-page-list">
             {['https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85',
               'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=85',
               'https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=1000&q=85'].map((im,i) => (
-              <div key={im} className={`animate-reveal d-${(i%3)+1}`} style={{ width: '100%' }}>
-                <img src={im} alt="Imagem demonstrativa de estética" style={{ width: '100%', aspectRatio: i === 0 ? '16/9' : '4/5', objectFit: 'cover', filter: 'grayscale(0.15)', display: 'block' }} loading="lazy" />
-                <span className="eyebrow" style={{ marginTop: '20px', marginBottom: '0' }}>{['Facial','Pele','Harmonização'][i]} · visual demonstrativo</span>
+              <div key={im} className={`results-page-item results-page-item-${i} animate-reveal d-${(i%3)+1}`}>
+                <div className="results-page-img-wrap">
+                  <img src={im} alt="Imagem demonstrativa de estética" className="results-page-img" loading="lazy" />
+                </div>
+                <span className="eyebrow" style={{ marginTop: '16px', marginBottom: '0' }}>{['Facial','Pele','Harmonização'][i]} · visual demonstrativo</span>
               </div>
             ))}
           </div>
