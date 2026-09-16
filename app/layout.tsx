@@ -3,7 +3,7 @@ import { Cormorant_Garamond, Inter } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const cormorant = Cormorant_Garamond({ subsets: ['latin'], variable: '--font-cormorant' })
+const cormorant = Cormorant_Garamond({ subsets: ['latin'], variable: '--font-cormorant', weight: ['300','400','500','600'], style: ['normal','italic'] })
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -35,10 +35,13 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#F3EFEA' },
+    { media: '(prefers-color-scheme: dark)', color: '#1D1B19' },
   ],
 }
 

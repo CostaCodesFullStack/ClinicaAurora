@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowUpRight, ChevronDown, Menu, MessageCircle, X, Sparkles, Heart, ShieldCheck } from 'lucide-react'
+import { ArrowRight, ChevronDown, Menu, MessageCircle, X, Sparkles, Heart, ShieldCheck } from 'lucide-react'
 
 const wa = 'https://wa.me/?text=' + encodeURIComponent('Olá! Gostaria de agendar uma avaliação na Clínica Aurora.')
 const nav = [['Início','/'],['Procedimentos','/procedimentos'],['Sobre','/sobre'],['Profissionais','/profissionais'],['Resultados','/resultados'],['FAQ','/faq']]
@@ -29,28 +29,442 @@ const faqs = [
 function Header() {
   const [open, setOpen] = useState(false)
   const path = usePathname()
-  return <header className="site-header"><div className="header-inner">
-    <Link href="/" className="logo" onClick={() => setOpen(false)}>CLÍNICA <em>AURORA</em><span>•</span><small>PROJETO CONCEITUAL</small></Link>
-    <nav className="desktop-nav">{nav.map(([label, href]) => <Link key={href} className={path === href ? 'active' : ''} href={href}>{label}</Link>)}</nav>
-    <a className="button button-small header-cta" href={wa} target="_blank" rel="noreferrer">Agendar avaliação <ArrowUpRight size={15}/></a>
-    <button className="menu-button" aria-label={open ? 'Fechar menu' : 'Abrir menu'} onClick={() => setOpen(!open)}>{open ? <X/> : <Menu/>}</button>
-  </div>{open && <nav className="mobile-nav">{nav.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}<a href={wa} target="_blank" rel="noreferrer" className="button">Agendar avaliação <ArrowUpRight size={16}/></a></nav>}</header>
+  return (
+    <header className="site-header">
+      <div className="container header-inner">
+        <Link href="/" className="logo" onClick={() => setOpen(false)}>
+          <span className="logo-main">CLÍNICA <em>AURORA</em></span>
+        </Link>
+        <nav className="desktop-nav">
+          {nav.map(([label, href]) => (
+            <Link key={href} className={path === href ? 'active' : ''} href={href}>{label}</Link>
+          ))}
+        </nav>
+        <a className="button header-cta" href={wa} target="_blank" rel="noreferrer">Agendar avaliação</a>
+        <button className="menu-button" aria-label={open ? 'Fechar menu' : 'Abrir menu'} onClick={() => setOpen(!open)}>
+          {open ? <X strokeWidth={1} size={28} /> : <Menu strokeWidth={1} size={28} />}
+        </button>
+      </div>
+      {open && (
+        <nav className="mobile-nav">
+          {nav.map(([label, href]) => (
+            <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>
+          ))}
+          <a href={wa} target="_blank" rel="noreferrer" className="button" style={{ alignSelf: 'flex-start' }} onClick={() => setOpen(false)}>Agendar avaliação</a>
+        </nav>
+      )}
+    </header>
+  )
 }
-function SectionHeading({ eyebrow, title, text, light=false }: {eyebrow:string,title:string,text?:string,light?:boolean}) { return <div className={'section-heading '+(light?'light':'')}><span className="eyebrow">{eyebrow}</span><h2>{title}</h2>{text && <p>{text}</p>}</div> }
-function WhatsApp() { return <a className="whatsapp" href={wa} target="_blank" rel="noreferrer" aria-label="Agendar avaliação demonstrativa"><MessageCircle size={19}/><span>Agendar avaliação</span></a> }
-function Footer() { return <footer><div className="footer-main"><div><Link href="/" className="logo footer-logo">CLÍNICA <em>AURORA</em><span>•</span></Link><p>Estética avançada para realçar<br/>sua essência.</p></div><div className="footer-links"><span>Navegue</span>{nav.slice(1).map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<Link href="/contato">Agendar avaliação</Link></div><div className="footer-contact"><span>Dados conceituais do projeto</span><p>WhatsApp<br/>Ação demonstrativa</p><button className="footer-action" onClick={() => window.open(wa, '_blank', 'noopener,noreferrer')}>Falar com a equipe ↗</button></div></div><div className="footer-bottom"><span>Clínica Aurora é uma marca fictícia desenvolvida pela Blaze System™ exclusivamente para demonstração de design, desenvolvimento e experiência digital.</span><span>Projeto conceitual · Conteúdo ilustrativo</span></div></footer> }
-function CTA() { return <section className="final-cta"><div><span className="eyebrow">Um primeiro passo</span><h2>Seu cuidado começa<br/><i>com uma conversa.</i></h2><p>Agende uma avaliação e descubra quais possibilidades fazem sentido para você.</p><a className="button button-light" href={wa} target="_blank" rel="noreferrer">Agendar avaliação <ArrowUpRight size={17}/></a></div><div className="cta-mark">A<span>·</span></div></section> }
-function FAQ({ limit }: {limit?:number}) { const [active,setActive]=useState<number|null>(null); return <div className="faq-list">{faqs.slice(0,limit).map((item,i)=><div className={'faq-item '+(active===i?'open':'')} key={item.question}><button id={`faq-question-${i}`} onClick={()=>setActive(active===i?null:i)} aria-expanded={active===i} aria-controls={`faq-answer-${i}`}><span>0{i+1}</span>{item.question}<ChevronDown size={18}/></button>{active===i&&<p id={`faq-answer-${i}`} role="region" aria-labelledby={`faq-question-${i}`}>{item.answer}</p>}</div>)}</div> }
-function ProcedureCard({item, index, detailed=false}:{item:any,index:number,detailed?:boolean}) { return <article className={'procedure-card card-'+index}><Link href="/procedimentos" className="procedure-card-link"><div className="image-wrap"><img src={item.image} alt={item.title}/><span>0{index+1}</span></div><div className="card-copy"><h3>{item.title}</h3><p>{item.text}</p><ArrowUpRight size={18}/></div></Link>{detailed&&<div className="procedure-detail"><span>Indicado para</span><p>{item.indication}</p><ul>{item.benefits?.map((benefit:string)=><li key={benefit}>{benefit}</li>)}</ul><Link href="/contato" className="text-link">Conhecer procedimento <ArrowUpRight size={15}/></Link></div>}</article> }
-function Home() { return <><main>
-  <section className="hero"><div className="hero-copy"><span className="eyebrow">Estética avançada · cuidado essencial</span><h1>Realce sua<br/><i>essência.</i></h1><p>Estética avançada, cuidado personalizado e resultados naturais para valorizar aquilo que torna você única.</p><div className="hero-actions"><a href={wa} target="_blank" rel="noreferrer" className="button">Agendar avaliação <ArrowUpRight size={17}/></a><Link href="/procedimentos" className="text-link">Conhecer procedimentos <ArrowUpRight size={16}/></Link></div></div><div className="hero-image"><img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1400&q=90" alt="Mulher em ambiente claro de cuidado e bem-estar"/><div className="hero-note">Cuidado que<br/><i>se revela</i></div></div><div className="hero-side">01 <span>↓</span> 04</div></section>
-  <section className="manifesto"><div className="manifesto-number">01 <span>/ 04</span></div><SectionHeading eyebrow="O jeito Aurora" title="Cuidar é olhar<br/><i>por inteiro.</i>" text="Acreditamos que a beleza não precisa ser transformada — apenas cuidada com intenção, conhecimento e respeito à sua individualidade."/><div className="manifesto-symbol">✦</div></section>
-  <section className="values"><div className="value"><Heart/><h3>Atendimento<br/>personalizado</h3><p>Protocolos individualizados para cada necessidade.</p></div><div className="value"><Sparkles/><h3>Resultados<br/>naturais</h3><p>Tratamentos que valorizam suas características.</p></div><div className="value"><ShieldCheck/><h3>Tecnologia e<br/>conhecimento</h3><p>Precisão e segurança em cada escolha.</p></div></section>
-  <section className="procedures-section"><SectionHeading eyebrow="Nossos cuidados" title="Possibilidades para<br/><i>o seu momento.</i>" text="Cada pessoa tem uma história. Cada protocolo começa com escuta."/><div className="procedure-grid">{procedures.map((item,i)=><ProcedureCard key={item.title} item={item} index={i}/>)}</div><Link href="/procedimentos" className="outline-link">Ver todos os procedimentos <ArrowUpRight size={16}/></Link></section>
-  <section className="about-preview"><div className="about-image"><img src="https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1000&q=85" alt="Ambiente claro e acolhedor da Clínica Aurora"/><span>Um espaço para<br/><i>você.</i></span></div><div className="about-copy"><SectionHeading eyebrow="Sobre a Aurora" title="Beleza começa<br/><i>com cuidado.</i>" text="Na Clínica Aurora, acreditamos que cada tratamento deve respeitar a individualidade de quem está diante de nós. Unimos conhecimento, tecnologia e atendimento próximo para criar experiências personalizadas e resultados naturais."/><Link href="/sobre" className="text-link">Conheça a Aurora <ArrowUpRight size={16}/></Link></div></section>
-  <section className="results-strip"><div><span className="eyebrow">Olhares possíveis</span><h2>Uma estética que<br/><i>parece com você.</i></h2><p>Uma seleção visual demonstrativa da experiência que uma clínica real poderia apresentar.</p><Link href="/resultados" className="button button-light">Ver resultados <ArrowUpRight size={16}/></Link></div><div className="results-collage"><img src="https://images.unsplash.com/photo-1552693673-1bf958298935?auto=format&fit=crop&w=700&q=85" alt="Retrato editorial demonstrativo"/><img src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=700&q=85" alt="Cuidado com a pele demonstrativo"/></div></section>
-  <section className="team-preview"><SectionHeading eyebrow="Quem cuida" title="Presença, técnica<br/><i>e escuta.</i>" text="Profissionais fictícios apresentados apenas para demonstrar a estrutura deste projeto."/><div className="team-grid">{professionals.map((p)=><div className="team-card" key={p.name}><img src={p.image} alt={p.name}/><span>{p.role}</span><h3>{p.name}</h3><p className="team-card-bio">Protocolos personalizados, naturalidade e escuta em cada escolha.</p></div>)}</div><Link href="/profissionais" className="outline-link">Conheça nossa equipe <ArrowUpRight size={16}/></Link></section>
-  <section className="testimonial"><span className="eyebrow">Experiência de atendimento</span><blockquote>Atendimento personalizado, planejamento individualizado e acompanhamento próximo em cada etapa.</blockquote><p>Demonstração de componente editorial <span>· projeto conceitual</span></p></section>
-  <section className="faq-preview"><SectionHeading eyebrow="Dúvidas comuns" title="Antes de começar,<br/><i>vamos conversar.</i>"/><FAQ limit={3}/><Link href="/faq" className="text-link">Ver todas as perguntas <ArrowUpRight size={16}/></Link></section><CTA/></main><Footer/><WhatsApp/></> }
-function InnerPage({type}:{type:string}) { const configs:any={procedimentos:['Procedimentos pensados','para você.','Conheça possibilidades de cuidado construídas a partir da escuta, da técnica e do respeito à sua individualidade.'],sobre:['Uma pausa para','voltar a você.','A Clínica Aurora é uma marca fictícia criada para este projeto demonstrativo — um espaço imaginado para unir conhecimento, tecnologia e acolhimento.'],profissionais:['Pessoas por trás','do cuidado.','Conheça os profissionais fictícios criados para demonstrar como uma equipe poderia ser apresentada.'],resultados:['Resultados &','inspirações.','Cada pessoa possui características únicas. Os exemplos apresentados são exclusivamente ilustrativos e representam possibilidades de abordagem estética.'],faq:['Tudo o que você','quer saber.','Respostas claras para tornar seu primeiro contato mais tranquilo.'],contato:['Vamos começar uma','boa conversa.','Conte um pouco sobre o que você procura. A equipe Aurora está pronta para ouvir.']}; const c=configs[type]; return <><main className="inner-page"><section className="page-hero"><span className="eyebrow">Clínica Aurora · cuidado essencial</span><h1>{c[0]}<br/><i>{c[1]}</i></h1><p>{c[2]}</p></section>{type==='procedimentos'&&<section className="inner-section"><div className="procedure-grid">{procedures.map((item,i)=><ProcedureCard key={item.title} item={item} index={i} detailed/>)}</div></section>}{type==='profissionais'&&<section className="inner-section team-detail">{professionals.map(p=><article key={p.name}><img src={p.image} alt={p.name}/><div><span className="eyebrow">{p.role}</span><h2>{p.name}</h2><p>{p.bio}</p><small>Perfil fictício criado para demonstração de layout.</small></div></article>)}</section>}{type==='resultados'&&<section className="inner-section result-page"><div className="demo-banner">Conteúdo demonstrativo para projeto de portfólio · não representa resultados reais de pacientes.</div><div className="result-gallery">{['https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85','https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=85','https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=1000&q=85'].map((im,i)=><div key={im}><img src={im} alt="Imagem demonstrativa de estética"/><span>{['Facial','Pele','Harmonização'][i]} · visual demonstrativo</span></div>)}</div></section>}{type==='faq'&&<section className="inner-section faq-page"><FAQ/></section>}{type==='sobre'&&<section className="inner-section story"><img src="https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1200&q=85" alt="Ambiente claro e acolhedor"/><div><SectionHeading eyebrow="Nossa filosofia" title="A técnica pode ser precisa. O cuidado precisa ser humano." text="Aurora é sobre presença. Sobre criar um espaço em que tecnologia e sensibilidade caminham juntas — e em que cada escolha nasce de uma conversa honesta."/><div className="story-points"><span>01 <b>Escuta antes de tudo</b></span><span>02 <b>Naturalidade como direção</b></span><span>03 <b>Conhecimento que acolhe</b></span></div></div></section>}{type==='contato'&&<section className="inner-section contact-page"><div className="contact-info"><span className="eyebrow">Fale com a Aurora</span><h2>O próximo passo<br/><i>pode ser simples.</i></h2><a className="button" href={wa} target="_blank" rel="noreferrer">Conversar pelo WhatsApp <ArrowUpRight size={16}/></a><p>Contato demonstrativo<br/>(00) 00000-0000<br/>Seg–Sex, 9h às 18h</p><small>Localização demonstrativa · Rua das Acácias, 000</small></div><form className="contact-form" onSubmit={e=>e.preventDefault()}><label>Seu nome<input placeholder="Como podemos chamar você?"/></label><label>Seu contato<input placeholder="WhatsApp ou e-mail"/></label><label>Como podemos ajudar? <textarea placeholder="Conte um pouco sobre o que procura..."/></label><button className="button" type="submit">Enviar mensagem <ArrowUpRight size={16}/></button></form></section>}<CTA/></main><Footer/><WhatsApp/></> }
-export default function AuroraSite(){ const path=usePathname(); const type=path==='/'?'home':path.slice(1); return <><Header/>{type==='home'?<Home/>:<InnerPage type={type}/>}</> }
+
+function SectionHeading({ eyebrow, title, text }: {eyebrow:string,title:string,text?:string}) { 
+  return (
+    <div className="section-head animate-reveal">
+      <h2 dangerouslySetInnerHTML={{__html: title}} />
+      {text && <p>{text}</p>}
+    </div>
+  ) 
+}
+
+function WhatsApp() { 
+  return (
+    <a className="wa-btn" href={wa} target="_blank" rel="noreferrer" aria-label="Agendar avaliação">
+      <MessageCircle strokeWidth={1.5} />
+    </a>
+  ) 
+}
+
+function Footer() { 
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Link href="/" className="logo">
+              <span className="logo-main" style={{ fontSize: '14px' }}>CLÍNICA <em>AURORA</em></span>
+            </Link>
+            <h2>Estética avançada para realçar sua essência.</h2>
+          </div>
+          <div className="footer-col footer-col-1">
+            <span>Navegue</span>
+            {nav.slice(1).map(([label, href]) => (
+              <Link key={href} href={href}>{label}</Link>
+            ))}
+            <Link href="/contato">Agendar avaliação</Link>
+          </div>
+          <div className="footer-col footer-col-2">
+            <span>Dados do projeto</span>
+            <p>WhatsApp<br/>Ação demonstrativa</p>
+            <button onClick={() => window.open(wa, '_blank', 'noopener,noreferrer')}>Falar com a equipe</button>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>Clínica Aurora é uma marca fictícia desenvolvida pela Blaze System™ exclusivamente para demonstração de design.</span>
+          <span>Projeto conceitual · Conteúdo ilustrativo</span>
+        </div>
+      </div>
+    </footer>
+  ) 
+}
+
+function CTA() { 
+  return (
+    <section className="container section-pad section-border-top">
+      <div className="cta-block animate-reveal">
+        <span className="eyebrow">Um primeiro passo</span>
+        <h2>Seu cuidado começa <i>com uma conversa.</i></h2>
+        <p className="cta-desc">Agende uma avaliação e descubra quais possibilidades fazem sentido para você.</p>
+        <a className="button" href={wa} target="_blank" rel="noreferrer">Agendar avaliação</a>
+      </div>
+    </section>
+  ) 
+}
+
+function FAQ({ limit }: {limit?:number}) { 
+  const [active,setActive]=useState<number|null>(null); 
+  return (
+    <div className="faq-list">
+      {faqs.slice(0,limit).map((item,i) => (
+        <div className={`faq-row ${active===i ? 'open' : ''}`} key={item.question}>
+          <button className="faq-btn" id={`faq-question-${i}`} onClick={() => setActive(active===i ? null : i)} aria-expanded={active===i} aria-controls={`faq-answer-${i}`}>
+            <span>0{i+1}</span>
+            <h3>{item.question}</h3>
+            <ChevronDown className="faq-icon" strokeWidth={1} size={22} />
+          </button>
+          <div className="faq-ans" id={`faq-answer-${i}`} role="region" aria-labelledby={`faq-question-${i}`}>
+            <p>{item.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) 
+}
+
+function Home() { 
+  return (
+    <main>
+      <section className="container">
+        <div className="hero">
+          <div className="hero-content animate-reveal">
+            <div>
+              <span className="eyebrow">Estética avançada · cuidado essencial</span>
+              <h1>Realce<br/>sua <i>essência.</i></h1>
+            </div>
+            <p>Estética avançada, cuidado personalizado e resultados naturais para valorizar aquilo que torna você única.</p>
+            <div className="hero-actions">
+              <a href={wa} target="_blank" rel="noreferrer" className="button">Agendar avaliação</a>
+              <Link href="/procedimentos" className="text-link">Conhecer procedimentos</Link>
+            </div>
+          </div>
+          <div className="hero-image-wrap animate-reveal d-1">
+            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1400&q=90" alt="Mulher em ambiente claro de cuidado e bem-estar" fetchPriority="high" />
+          </div>
+        </div>
+      </section>
+      
+      <section className="container section-pad">
+        <div className="manifesto-wrap animate-reveal">
+          <span className="eyebrow">01 / 04 — O jeito Aurora</span>
+          <h2>Cuidar é olhar <i>por inteiro.</i></h2>
+          <p>Acreditamos que a beleza não precisa ser transformada — apenas cuidada com intenção, conhecimento e respeito à sua individualidade.</p>
+        </div>
+        
+        <div className="values-list animate-reveal d-1">
+          <div className="value-row">
+            <span className="value-num">01</span>
+            <div className="value-title">
+              <Heart />
+              <h3>Atendimento personalizado</h3>
+            </div>
+            <p className="value-desc">Protocolos individualizados para cada necessidade.</p>
+          </div>
+          <div className="value-row">
+            <span className="value-num">02</span>
+            <div className="value-title">
+              <Sparkles />
+              <h3>Resultados naturais</h3>
+            </div>
+            <p className="value-desc">Tratamentos que valorizam suas características.</p>
+          </div>
+          <div className="value-row">
+            <span className="value-num">03</span>
+            <div className="value-title">
+              <ShieldCheck />
+              <h3>Tecnologia e conhecimento</h3>
+            </div>
+            <p className="value-desc">Precisão e segurança em cada escolha.</p>
+          </div>
+        </div>
+      </section>
+      
+      <section className="container section-pad section-border-top">
+        <SectionHeading 
+          eyebrow="Nossos cuidados" 
+          title="Possibilidades para<br/><i>o seu momento.</i>" 
+          text="Cada pessoa tem uma história. Cada protocolo começa com escuta." 
+        />
+        <div className="proc-list">
+          {procedures.map((item,i) => (
+            <div key={item.title} className="proc-item animate-reveal">
+              <div className="proc-img">
+                <Link href="/procedimentos">
+                  <img src={item.image} alt={item.title} loading="lazy" />
+                </Link>
+              </div>
+              <div className="proc-text">
+                <span className="eyebrow" style={{ marginBottom: 0 }}>0{i+1}</span>
+                <Link href="/procedimentos" style={{ textDecoration: 'none' }}>
+                  <h3>{item.title} <ArrowRight strokeWidth={1} /></h3>
+                </Link>
+                <p>{item.text}</p>
+                <Link href="/contato" className="text-link" style={{ alignSelf: 'flex-start' }}>Agendar</Link>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="proc-more">
+          <Link href="/procedimentos" className="button-outline">Ver todos os procedimentos</Link>
+        </div>
+      </section>
+      
+      <section className="container section-pad section-border-top">
+        <div className="about-grid">
+          <div className="about-content animate-reveal">
+            <span className="eyebrow">Sobre a Aurora</span>
+            <h2>Beleza começa <i>com cuidado.</i></h2>
+            <p>Na Clínica Aurora, acreditamos que cada tratamento deve respeitar a individualidade de quem está diante de nós. Unimos conhecimento, tecnologia e atendimento próximo para criar experiências personalizadas e resultados naturais.</p>
+            <Link href="/sobre" className="button-outline">Conheça a Aurora</Link>
+          </div>
+          <div className="about-img animate-reveal d-1">
+            <img src="https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1000&q=85" alt="Ambiente claro e acolhedor da Clínica Aurora" loading="lazy" />
+          </div>
+        </div>
+      </section>
+      
+      <section className="container section-pad section-border-top">
+        <div className="res-grid">
+          <div className="res-content animate-reveal">
+            <span className="eyebrow">Olhares possíveis</span>
+            <h2>Uma estética que <i>parece com você.</i></h2>
+            <p className="res-desc">Uma seleção visual demonstrativa da experiência que uma clínica real poderia apresentar.</p>
+            <Link href="/resultados" className="text-link">Ver resultados</Link>
+          </div>
+          <div className="res-img-wrap-1 animate-reveal d-1">
+            <img className="res-img-1" src="https://images.unsplash.com/photo-1552693673-1bf958298935?auto=format&fit=crop&w=700&q=85" alt="Retrato editorial demonstrativo" loading="lazy" />
+          </div>
+          <div className="res-img-wrap-2 animate-reveal d-2">
+            <img className="res-img-2" src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=700&q=85" alt="Cuidado com a pele demonstrativo" loading="lazy" />
+          </div>
+        </div>
+      </section>
+      
+      <section className="container section-pad section-border-top">
+        <SectionHeading 
+          eyebrow="Quem cuida" 
+          title="Presença, técnica<br/><i>e escuta.</i>" 
+          text="Profissionais fictícios apresentados apenas para demonstrar a estrutura deste projeto." 
+        />
+        <div className="team-list">
+          {professionals.map((p, i) => (
+            <div className={`team-person animate-reveal d-${(i % 3) + 1}`} key={p.name}>
+              <div className="team-person-img">
+                <img src={p.image} alt={p.name} loading="lazy" />
+              </div>
+              <div>
+                <span className="eyebrow" style={{ marginBottom: '12px' }}>{p.role}</span>
+                <h3>{p.name}</h3>
+                <p>{p.bio}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      <section className="container section-pad section-border-top section-border-bottom">
+        <div className="test-block animate-reveal">
+          <span className="eyebrow">Experiência de atendimento</span>
+          <blockquote>Atendimento personalizado, planejamento individualizado e acompanhamento próximo em cada etapa.</blockquote>
+          <p style={{ textTransform: 'uppercase', fontSize: '10px', letterSpacing: '0.2em' }}>Demonstração de componente editorial · projeto conceitual</p>
+        </div>
+      </section>
+      
+      <section className="container section-pad">
+        <div className="faq-wrap">
+          <div className="faq-title animate-reveal">
+            <span className="eyebrow">Dúvidas comuns</span>
+            <h2>Antes de começar, <i>vamos conversar.</i></h2>
+            <div className="faq-more">
+              <Link href="/faq" className="button-outline">Ver todas as perguntas</Link>
+            </div>
+          </div>
+          <div className="faq-acc animate-reveal d-1">
+            <FAQ limit={3} />
+          </div>
+        </div>
+      </section>
+      
+      <CTA />
+    </main>
+  )
+}
+
+function InnerPage({type}:{type:string}) { 
+  const configs: Record<string, [string, string, string]> = {
+    procedimentos: ['Procedimentos pensados','para você.','Conheça possibilidades de cuidado construídas a partir da escuta, da técnica e do respeito à sua individualidade.'],
+    sobre: ['Uma pausa para','voltar a você.','A Clínica Aurora é uma marca fictícia criada para este projeto demonstrativo — um espaço imaginado para unir conhecimento, tecnologia e acolhimento.'],
+    profissionais: ['Pessoas por trás','do cuidado.','Conheça os profissionais fictícios criados para demonstrar como uma equipe poderia ser apresentada.'],
+    resultados: ['Resultados &','inspirações.','Cada pessoa possui características únicas. Os exemplos apresentados são exclusivamente ilustrativos e representam possibilidades de abordagem estética.'],
+    faq: ['Tudo o que você','quer saber.','Respostas claras para tornar seu primeiro contato mais tranquilo.'],
+    contato: ['Vamos começar uma','boa conversa.','Conte um pouco sobre o que você procura. A equipe Aurora está pronta para ouvir.'],
+    '404': ['Página não','encontrada.','O conteúdo que você procura não está disponível ou foi movido.']
+  }; 
+  const fallback: [string, string, string] = configs['404'];
+  const c = configs[type] || fallback; 
+  const is404 = type === '404' || !configs[type];
+  
+  return (
+    <main className="inner-page">
+      <section className="container">
+        <div className="inner-hero animate-reveal">
+          <span className="eyebrow">Clínica Aurora · {is404 ? '404' : type}</span>
+          <h1>{c[0]}<br/><i>{c[1]}</i></h1>
+          <p>{c[2]}</p>
+        </div>
+      </section>
+      
+      {is404 && (
+        <section className="container inner-pad-bottom">
+          <Link href="/" className="button">Voltar ao início</Link>
+        </section>
+      )}
+
+      {type === 'procedimentos' && (
+        <section className="container inner-pad-bottom">
+          <div className="proc-list">
+            {procedures.map((item,i) => (
+              <div key={item.title} className="proc-item animate-reveal">
+                <div className="proc-img">
+                  <img src={item.image} alt={item.title} loading="lazy" />
+                </div>
+                <div className="proc-text">
+                  <span className="eyebrow" style={{ marginBottom: 0 }}>0{i+1}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                  <div style={{ borderTop: '1px solid var(--border)', marginTop: '24px', paddingTop: '24px' }}>
+                    <span className="eyebrow" style={{ color: 'var(--primary)', marginBottom: '12px' }}>Indicado para</span>
+                    <p style={{ marginBottom: '16px' }}>{item.indication}</p>
+                    <div className="proc-tags">
+                      {item.benefits?.map((benefit:string) => <span key={benefit}>{benefit}</span>)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      
+      {type === 'profissionais' && (
+        <section className="container inner-pad-bottom">
+          <div className="team-detail-list">
+            {professionals.map((p, i) => (
+              <article key={p.name} className="team-detail-item animate-reveal">
+                <img src={p.image} alt={p.name} className="team-detail-img" loading="lazy" />
+                <div className="team-detail-info">
+                  <span className="eyebrow">{p.role}</span>
+                  <h2>{p.name}</h2>
+                  <p>{p.bio}</p>
+                  <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted-foreground)' }}>Perfil fictício demonstrativo</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+      
+      {type === 'resultados' && (
+        <section className="container inner-pad-bottom">
+          <div className="results-disclaimer animate-reveal">
+            Conteúdo demonstrativo para projeto de portfólio · não representa resultados reais de pacientes.
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', width: '100%' }}>
+            {['https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85',
+              'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=85',
+              'https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=1000&q=85'].map((im,i) => (
+              <div key={im} className={`animate-reveal d-${(i%3)+1}`} style={{ width: '100%' }}>
+                <img src={im} alt="Imagem demonstrativa de estética" style={{ width: '100%', aspectRatio: i === 0 ? '16/9' : '4/5', objectFit: 'cover', filter: 'grayscale(0.15)', display: 'block' }} loading="lazy" />
+                <span className="eyebrow" style={{ marginTop: '20px', marginBottom: '0' }}>{['Facial','Pele','Harmonização'][i]} · visual demonstrativo</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {type === 'faq' && (
+        <section className="container inner-pad-bottom">
+          <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+            <FAQ />
+          </div>
+        </section>
+      )}
+      
+      {type === 'sobre' && (
+        <section className="container inner-pad-bottom">
+          <div className="story-section animate-reveal">
+            <div className="story-content">
+              <span className="eyebrow">Nossa filosofia</span>
+              <h2 style={{ marginBottom: '24px' }}>A técnica pode ser precisa.<br/><i>O cuidado precisa ser humano.</i></h2>
+              <p>Aurora é sobre presença. Sobre criar um espaço em que tecnologia e sensibilidade caminham juntas — e em que cada escolha nasce de uma conversa honesta.</p>
+              <div className="story-points">
+                <span><b>01.</b> Escuta antes de tudo</span>
+                <span><b>02.</b> Naturalidade como direção</span>
+                <span><b>03.</b> Conhecimento que acolhe</span>
+              </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1200&q=85" alt="Ambiente claro e acolhedor" className="story-image animate-reveal d-1" loading="lazy" />
+          </div>
+        </section>
+      )}
+      
+      {type === 'contato' && (
+        <section className="container inner-pad-bottom">
+          <div className="contact-section">
+            <div className="contact-info animate-reveal">
+              <span className="eyebrow">Fale com a Aurora</span>
+              <h2>O próximo passo<br/><i>pode ser simples.</i></h2>
+              <a className="button" href={wa} target="_blank" rel="noreferrer" style={{ marginTop: '20px' }}>Conversar pelo WhatsApp</a>
+              
+              <div className="contact-details">
+                <p>Contato demonstrativo<br/>(00) 00000-0000<br/>Seg–Sex, 9h às 18h</p>
+                <span className="eyebrow" style={{ marginTop: '8px', marginBottom: 0 }}>Localização demonstrativa · Rua das Acácias, 000</span>
+              </div>
+            </div>
+            
+            <form className="contact-form animate-reveal d-1" onSubmit={e=>e.preventDefault()}>
+              <label>Seu nome<input placeholder="Como podemos chamar você?"/></label>
+              <label>Seu contato<input placeholder="WhatsApp ou e-mail"/></label>
+              <label>Como podemos ajudar? <textarea placeholder="Conte um pouco sobre o que procura..."/></label>
+              <button className="button-outline" type="submit" style={{ alignSelf: 'flex-start' }}>Enviar mensagem</button>
+            </form>
+          </div>
+        </section>
+      )}
+      
+      <CTA />
+    </main>
+  )
+}
+
+export default function AuroraSite() { 
+  const path = usePathname()
+  const type = path === '/' ? 'home' : path.slice(1)
+  
+  return (
+    <>
+      <Header />
+      {type === 'home' ? <Home /> : <InnerPage type={type} />}
+      <Footer />
+      <WhatsApp />
+    </>
+  )
+}
